@@ -1,0 +1,12 @@
+# Local test of the Railway image: docker compose -p her-2495 -f local-test/compose.yaml up -d --build
+services:
+  languagetool:
+    build: ..
+    labels: [her=2495]  # Heron sandbox label; harmless elsewhere
+    environment:
+      PORT: "8010"
+      LT_NGRAM_LANGUAGES: ${LT_NGRAM_LANGUAGES:-}
+    ports: ["42495:8010"]
+    volumes: [ngrams:/ngrams]
+volumes:
+  ngrams:
