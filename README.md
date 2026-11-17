@@ -1,3 +1,5 @@
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/languagetool-3?utm_medium=integration&utm_source=button&utm_campaign=languagetool)
+
 # LanguageTool on Railway
 
 A Railway template for the [LanguageTool](https://github.com/languagetool-org/languagetool) HTTP server: open-source grammar, style and spell checking for more than 25 languages, behind your own API URL. Point the LanguageTool browser add-on, LibreOffice, Obsidian or your own code at it, and your text never leaves your server.
@@ -28,7 +30,7 @@ The wrapper (`railway-start.sh`) listens on `PORT`, caps the Java heap (Railway 
 
 No prompts. Optional variables you can add to the service later:
 
-- `LT_NGRAM_LANGUAGES`: comma-separated list (`en`, `de`, `es`, `fr`, `nl`) of LanguageTool's official [n-gram data sets](https://languagetool.org/download/ngram-data/) to download onto the volume. They catch confused words such as *their/there*. Unpacked sizes: en 15.4 GB, fr 3.4 GB, de 3.3 GB, es 3.3 GB, nl 2.5 GB, so grow the volume first. The download runs once, in the background, and the API keeps working meanwhile. LanguageTool 6.8 drops its English and German spell checkers when n-grams are on but missing for those languages, so the wrapper turns n-grams on only once both `en` and `de` are on the volume: use `en,de` (plus any others), then restart once the logs say the data is ready.
+- `LT_NGRAM_LANGUAGES`: comma-separated list (`en`, `de`, `es`, `fr`, `nl`) of LanguageTool's official [n-gram data sets](https://languagetool.org/download/ngram-data/) to download onto the volume. They catch confused words such as *their/there*. Unpacked sizes: en 15.4 GB, fr 3.4 GB, de 3.3 GB, es 3.3 GB, nl 2.5 GB, so grow the volume first. The download runs once, in the background, and the API keeps working meanwhile. LanguageTool 6.8 drops its English and German spell checkers when n-grams are on but missing for those languages, so the wrapper turns n-grams on only once both `en` and `de` are on the volume: use `en,de` (plus any others), then restart once the logs say the data is ready. With `en` and `de` n-grams on, Railway shows about 5 GB of memory in use (LanguageTool maps the n-gram indexes into memory), against under 1 GB without them.
 - `Java_Xmx` / `Java_Xms`: Java heap limits (defaults `2g` / `256m`). One language needs about 700 MB; each extra language in use adds 100–200 MB. Raise `Java_Xmx` for many languages or n-grams.
 - `langtool_<key>`: any LanguageTool [server setting](https://languagetool.org/development/api/org/languagetool/server/HTTPServerConfig.html), for example `langtool_requestLimit=0` to switch off the rate limit or `langtool_maxTextLength=100000`. These override the defaults above.
 
