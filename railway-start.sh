@@ -88,9 +88,10 @@ download_ngrams() {
     rm -rf "$tmp" && mkdir -p "$tmp"
     echo "[ngrams] $lang: downloading and unpacking $file (this takes a while)..."
     set +e
-    # Stream straight into unzip so the ZIP itself never needs disk space.
-    # unzip stops at the central directory, so curl may end with 23 (write error).
-    curl -fsSL --retry 3 "https://languagetool.org/download/ngram-data/$file" | (cd "$tmp" && unzip -q -o -)
+    # Stream straight into Java's jar tool, so the ZIP itself never needs disk
+    # space. (BusyBox unzip can't stream the ZIP64 entries of the en set.)
+    curl -fsSL --retry 3 "https://languagetool.org/download/ngram-data/$file" \
+      | (cd "$tmp" && java -Xmx128m -m jdk.jartool/sun.tools.jar.Main x)
     rc=("${PIPESTATUS[@]}")
     set -e
     if [ "${rc[1]}" = "0" ] && { [ "${rc[0]}" = "0" ] || [ "${rc[0]}" = "23" ]; } && [ -d "$tmp/$lang" ]; then
@@ -99,7 +100,7 @@ download_ngrams() {
       echo "[ngrams] $lang: ready. Restart the service once to load it."
     else
       rm -rf "$tmp"
-      echo "[ngrams] $lang: download failed (curl ${rc[0]}, unzip ${rc[1]}). It is retried on the next start."
+      echo "[ngrams] $lang: download failed (curl ${rc[0]}, unpack ${rc[1]}). It is retried on the next start."
     fi
   done
 }
